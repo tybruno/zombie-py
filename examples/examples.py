@@ -12,6 +12,7 @@ Example 4: Using raise_from_error=True
 from zombie import ExceptionTransformation, Reraise
 import string
 
+
 # Example 1: Using as a Context Manager
 def context_manager_example():
     """Example of using Reraise as a context manager."""
