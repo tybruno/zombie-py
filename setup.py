@@ -24,8 +24,7 @@ setup(
     keywords='python re-raise exceptions',
     url='https://github.com/tybruno/zombie-py',
     license='MIT',
-    package_data={'zombie-py': ['py.typed'], '': ['images/zombie-py.png']},
-    include_package_data=True,
+    package_data={'zombie-py': ['py.typed']},
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     classifiers=[
