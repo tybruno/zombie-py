@@ -248,7 +248,7 @@ class Reraise:
             # Convert the sequence of ExceptionTransformation objects to a tuple
             self.exception_transformations = tuple(exception_transformations)
 
-    def __enter__(self) -> typing.Self:
+    def __enter__(self):
         return self
 
     def __exit__(
