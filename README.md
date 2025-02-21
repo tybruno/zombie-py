@@ -1,6 +1,6 @@
 ![zombie-py-logo.png](images/zombie-py.png)
 
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-0000ff.svg)](https://github.com/psf/blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://opensource.org/licenses/MIT)
