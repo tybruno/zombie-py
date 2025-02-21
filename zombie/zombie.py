@@ -18,8 +18,8 @@ Functions:
 
 import logging
 import string
-import typing
 import functools
+from typing import Type, Iterable, Any, Union, Callable
 
 _LOG = logging.getLogger(__name__)
 
@@ -38,8 +38,10 @@ class ExceptionTransformation:
         error_message (typing.Optional[typing.Union[str, string.Template]]):
             The error message to use in the new exception. If a string
             template is provided, it will be substituted with the original
-            error message. If the default `None` provided, the original error
-            message will be used.
+            error message. For example, you can use
+            `string.Template("$original_error_message")` to include the
+             original error message in the new exception. If the default
+            is provided, the original error message will be used.
         raise_from_error (bool): Whether to chain the new exception from the
             original exception. If `True`, the new exception will be chained
             from the original exception. If `False`, the new exception will
@@ -48,9 +50,9 @@ class ExceptionTransformation:
 
     def __init__(
         self,
-        original_exception: typing.Type[BaseException],
-        new_exception: typing.Type[BaseException],
-        error_message: str | string.Template | None = None,
+        original_exception: Type[BaseException],
+        new_exception: Type[BaseException],
+        error_message: Union[string.Template, str] = string.Template("$original_error_message"),
         raise_from_error: bool = False,
     ):
         self.original_exception = original_exception
@@ -142,7 +144,7 @@ def _raise_transformed_exception(
 
 def _reraise_decorator(
     *exception_transformations: ExceptionTransformation,
-) -> typing.Callable:
+) -> Callable:
     """Decorator to apply exception transformations to a function.
 
     This decorator applies a collection of `ExceptionTransformation` objects
@@ -161,7 +163,7 @@ def _reraise_decorator(
         typing.Callable: The decorated function with exception transformations applied.
     """
 
-    def decorator(callable_: typing.Callable) -> typing.Callable:
+    def decorator(callable_: Callable) -> Callable:
         """Decorator function to apply exception transformations.
 
         This decorator function applies the exception transformations to the
@@ -184,7 +186,7 @@ def _reraise_decorator(
         """
 
         @functools.wraps(callable_)
-        def wrapper(*args, **kwargs) -> typing.Any:
+        def wrapper(*args, **kwargs) -> Any:
             """Wrapper function to apply exception transformations.
 
             This wrapper function applies the exception transformations to the
@@ -234,28 +236,26 @@ class Reraise:
 
     def __init__(
         self,
-        exception_transformations: ExceptionTransformation
-        | typing.Sequence[ExceptionTransformation],
+        exception_transformations: ExceptionTransformation | Iterable[ExceptionTransformation],
     ):
-        # Store the exception transformations as a tuple
-        self.exception_transformations: tuple[ExceptionTransformation, ...]
-
-        # Check if a single ExceptionTransformation object is provided
         if isinstance(exception_transformations, ExceptionTransformation):
-            # Convert the single object to a tuple
             self.exception_transformations = (exception_transformations,)
-        else:
-            # Convert the sequence of ExceptionTransformation objects to a tuple
-            self.exception_transformations = tuple(exception_transformations)
+        elif isinstance(exception_transformations, Iterable):
+            self.exception_transformations = exception_transformations
+        else :
+            raise TypeError(
+                'exception_transformations must be an `ExceptionTransformation`'
+                ' object or an iterable of `ExceptionTransformation` objects.'
+            )
 
     def __enter__(self):
         return self
 
     def __exit__(
         self,
-        exc_type: typing.Type[BaseException] | None,
+        exc_type: Type[BaseException] | None,
         exc_value: BaseException,
-        traceback: typing.Any | None,
+        traceback: Any | None,
     ):
         if exc_value is None:
             # No exception to handle, return False to indicate normal exit
@@ -268,9 +268,10 @@ class Reraise:
         # Return False to indicate that the exception was not handled here
         return False
 
-    def decorate(self, callable_: typing.Callable) -> typing.Callable:
+    def decorate(self, callable_: Callable) -> Callable:
         """Decorates a callable with exception transformations.
 
+        self,
         This method decorates a function with exception transformations using
         the `_reraise_decorator` function. The decorated function will apply
         the exception transformations to the function when it raises an
@@ -288,6 +289,6 @@ class Reraise:
         )
         return wrapped_callable
 
-    def __call__(self, func: typing.Callable) -> typing.Callable:
+    def __call__(self, func: Callable) -> Callable:
         wrapped_callable = self.decorate(func)
         return wrapped_callable

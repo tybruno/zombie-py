@@ -40,6 +40,10 @@ class TestExceptionTransformation:
 
 
 class TestTransformAndRaise:
+    def test_bad_init(self):
+        with pytest.raises(TypeError):
+            Reraise(1)
+
     def test_transform_and_raise_with_template(self):
         transform = ExceptionTransformation(
             original_exception=KeyError,
