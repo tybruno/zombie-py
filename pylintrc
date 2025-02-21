@@ -1,0 +1,2 @@
+[MESSAGES CONTROL]
+disable=logging-fstring-interpolation # f-strings are supported in python 3.6+
