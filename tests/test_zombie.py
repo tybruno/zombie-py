@@ -83,7 +83,7 @@ class TestRaiseTransformedException:
         )
         with pytest.raises(ValueError) as exc_info:
             _raise_transformed_exception(
-                transform, error=KeyError('Original error message')
+                [transform], error=KeyError('Original error message')
             )
         assert str(exc_info.value) == 'An error occurred'
         assert exc_info.value.__cause__.__class__ == KeyError
@@ -91,7 +91,7 @@ class TestRaiseTransformedException:
     def test_no_transformation_found(self, caplog):
         with pytest.raises(KeyError) as exc_info:
             _raise_transformed_exception(
-                error=KeyError('Original error message')
+                [], error=KeyError('Original error message')
             )
         assert str(exc_info.value) == "'Original error message'"
 
@@ -105,7 +105,7 @@ class TestReraiseDecorator:
             raise_from_error=True,
         )
 
-        @_reraise_decorator(transform)
+        @_reraise_decorator([transform])
         def func():
             raise KeyError('Original error message')
 

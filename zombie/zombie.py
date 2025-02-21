@@ -19,7 +19,7 @@ Functions:
 import logging
 import string
 import functools
-from typing import Type, Iterable, Any, Union, Callable
+from typing import Type, Iterable, Any, Union, Callable, Tuple
 
 _LOG = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ def _transform_and_raise(
 
 
 def _raise_transformed_exception(
-    *exception_transformations: ExceptionTransformation,
+    exception_transformations: Iterable[ExceptionTransformation],
     error: BaseException,
 ) -> None:
     """Transforms and raises an exception based on provided exception
@@ -127,7 +127,7 @@ def _raise_transformed_exception(
     exception specified in the transformation.
 
     Args:
-        *exception_transformations (ExceptionTransformation): Variable number
+        exception_transformations (Iterable[ExceptionTransformation]): Variable number
             of `ExceptionTransformation` objects that define how to transform
             and raise exceptions.
         error (BaseException): The original exception that needs to be
@@ -145,7 +145,7 @@ def _raise_transformed_exception(
 
 
 def _reraise_decorator(
-    *exception_transformations: ExceptionTransformation,
+    exception_transformations: Iterable[ExceptionTransformation],
 ) -> Callable:
     """Decorator to apply exception transformations to a function.
 
@@ -157,7 +157,7 @@ def _reraise_decorator(
     transformation.
 
     Args:
-        *exception_transformations (ExceptionTransformation): Variable number
+        exception_transformations (Iterable[ExceptionTransformation]): Variable number
             of `ExceptionTransformation` objects that define how to transform
             and raise exceptions.
 
@@ -215,7 +215,7 @@ def _reraise_decorator(
             # pylint: disable=broad-except
             except BaseException as error:
                 _raise_transformed_exception(
-                    *exception_transformations, error=error
+                    exception_transformations, error=error
                 )
             return result
 
@@ -229,8 +229,8 @@ class Reraise:
     transformations.
 
     Args:
-        exception_transformations (typing.Union[ExceptionTransformation,
-            typing.Sequence[ExceptionTransformation]]):
+        exception_transformations (Union[ExceptionTransformation,
+            Iterable[ExceptionTransformation]]):
             A single `ExceptionTransformation` object or a sequence of
             `ExceptionTransformation` objects that define
             how to transform and raise exceptions.
@@ -241,10 +241,11 @@ class Reraise:
         exception_transformations: ExceptionTransformation
         | Iterable[ExceptionTransformation],
     ):
+        self.exception_transformations: Tuple[ExceptionTransformation, ...]
         if isinstance(exception_transformations, ExceptionTransformation):
             self.exception_transformations = (exception_transformations,)
         elif isinstance(exception_transformations, Iterable):
-            self.exception_transformations = exception_transformations
+            self.exception_transformations = tuple(exception_transformations)
         else:
             raise TypeError(
                 'exception_transformations must be an `ExceptionTransformation`'
@@ -266,7 +267,7 @@ class Reraise:
         error = exc_value
         # Transform and raise the exception based on the provided transformations
         _raise_transformed_exception(
-            *self.exception_transformations, error=error
+            self.exception_transformations, error=error
         )
         # Return False to indicate that the exception was not handled here
         return False
@@ -287,7 +288,7 @@ class Reraise:
             typing.Callable: The decorated function with exception
               transformations applied.
         """
-        wrapped_callable = _reraise_decorator(*self.exception_transformations)(
+        wrapped_callable = _reraise_decorator(self.exception_transformations)(
             callable_
         )
         return wrapped_callable
