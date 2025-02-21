@@ -73,7 +73,7 @@ transforms = [
 ]
 
 # Using as a decorator with multiple transforms
-@Reraise(*transforms)
+@Reraise(transforms)
 def func():
     raise KeyError('Original error message')
 

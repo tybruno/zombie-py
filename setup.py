@@ -4,7 +4,7 @@ from setuptools import (
     setup,
 )
 
-__version__ = 'v1.0'
+__version__ = 'v1.1'
 __author__ = 'Tyler Bruno'
 DESCRIPTION = 'Raising Exceptions From the Dead by Re-raising Them With New Exception \
     Types'
