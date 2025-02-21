@@ -52,7 +52,9 @@ class ExceptionTransformation:
         self,
         original_exception: Type[BaseException],
         new_exception: Type[BaseException],
-        error_message: Union[string.Template, str] = string.Template("$original_error_message"),
+        error_message: Union[string.Template, str] = string.Template(
+            '$original_error_message'
+        ),
         raise_from_error: bool = False,
     ):
         self.original_exception = original_exception
@@ -236,13 +238,14 @@ class Reraise:
 
     def __init__(
         self,
-        exception_transformations: ExceptionTransformation | Iterable[ExceptionTransformation],
+        exception_transformations: ExceptionTransformation
+        | Iterable[ExceptionTransformation],
     ):
         if isinstance(exception_transformations, ExceptionTransformation):
             self.exception_transformations = (exception_transformations,)
         elif isinstance(exception_transformations, Iterable):
             self.exception_transformations = exception_transformations
-        else :
+        else:
             raise TypeError(
                 'exception_transformations must be an `ExceptionTransformation`'
                 ' object or an iterable of `ExceptionTransformation` objects.'
