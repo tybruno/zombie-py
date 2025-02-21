@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://opensource.org/licenses/MIT)
 [![codecov](https://codecov.io/gh/tybruno/zombie-py/branch/main/graph/badge.svg?token=ZO94EJFI3G)](https://codecov.io/gh/tybruno/zombie-py)
 [![Pylint](https://img.shields.io/badge/Pylint-10.0%2F10-green)](10.0/10)
+[![Pylama](https://img.shields.io/badge/Pylama-10.0%2F10-green)](https://github.com/psf/pylama)
 [![Mypy](https://img.shields.io/badge/Mypy-checked-blue)](10.0/10)
 
 # zombie-py

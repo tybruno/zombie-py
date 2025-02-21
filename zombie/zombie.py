@@ -23,6 +23,7 @@ import functools
 
 _LOG = logging.getLogger(__name__)
 
+
 # pylint: disable=too-few-public-methods
 class ExceptionTransformation:
     """Defines the transformation of one exception type to another.
