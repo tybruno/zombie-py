@@ -13,6 +13,7 @@
 
 Bringing Raised Exceptions Back From the Dead As New Exceptions.
 
+`zombie-py` is a Python library that simplifies the process of transforming and re-raising exceptions. It provides a context manager and decorator for handling exceptions, allowing you to define custom transformations for exceptions. `zombie-py` is designed to make it easier to handle exceptions in Python by providing a simple and flexible way to transform and re-raise exceptions.
 ## Key Features:
 
 * **Easy**: Simplifies the process of transforming and re-raising exceptions.
@@ -97,34 +98,54 @@ Traceback (most recent call last):
 ValueError: A KeyError occurred
 ```
 
-#### Example 3: Catching and Transforming a Parent Exception
+#### Example 3: Ordering of Exception Transformations
+
+The order in which `ExceptionTransformation` objects are provided to the `Reraise` context manager or decorator matters.
+The transformations are applied sequentially, and the first matching transformation will be used to transform and
+raise the exception. This means that if multiple transformations could apply to the same exception, 
+the first one in the list will take precedence. For example, consider the following transformations:
 ```python
 from zombie import ExceptionTransformation, Reraise
 
+# Order matters: The first matching transformation will be applied
 @Reraise(
-    ExceptionTransformation(
-        original_exception=Exception,
-        new_exception=ValueError,
-    ),
+    [
+        ExceptionTransformation(
+            original_exception=KeyError,
+            new_exception=ValueError,
+            error_message='A KeyError occurred', 
+        ),
+        ExceptionTransformation(
+            original_exception=Exception,
+            new_exception=KeyboardInterrupt,
+            error_message='An Exception occurred',
+        ),
+    ]
 )
 def func():
     raise KeyError('Original error message')
 
 func()
+# Raises ValueError with message 'A KeyError occurred'
+# Since KeyError is a subclass of Exception, the second transformation will not be applied.
 ```
 
-### Example Output
+#### Example Output
 ```shell
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "<path_to_project>/zombie/zombie.py", line 212, in wrapper
+  File "zombie.py", line 314, in <module>
+    func()
+  File "zombie.py", line 213, in wrapper
     _raise_transformed_exception(
-  File "<path_to_project>/zombie/zombie.py", line 137, in _raise_transformed_exception
+  File "zombie.py", line 138, in _raise_transformed_exception
     _transform_and_raise(transform=transform, error=error)
-  File "<path_to_project>/zombie/zombie.py", line 103, in _transform_and_raise
-    raise transform.new_exception(error_message) from error
-ValueError: None
+  File "zombie.py", line 109, in _transform_and_raise
+    raise transform.new_exception(error_message) from None
+ValueError: A KeyError occurred
 ```
+
+In this example, even though `KeyError` is a subclass of `Exception`, the `ExceptionTransformation` for `Exception` will be applied first, transforming the `KeyError` into a `KeyboardInterrupt`. If the order were reversed, the `KeyError` would be transformed into a `RuntimeError` instead. Therefore, the order of transformations can affect the final exception that is raised.
+
 ## Advanced Usage Examples for `ExceptionTransformation`
 
 ### Using `error_message`
