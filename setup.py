@@ -4,7 +4,7 @@ from setuptools import (
     setup,
 )
 
-__version__ = 'v1.1'
+__version__ = 'v1.2'
 __author__ = 'Tyler Bruno'
 DESCRIPTION = 'Raising Exceptions From the Dead by Re-raising Them With New Exception \
     Types'
@@ -24,17 +24,17 @@ setup(
     keywords='python re-raise exceptions',
     url='https://github.com/tybruno/zombie-py',
     license='MIT',
-    package_data={'zombie-py': ['py.typed'], '': ['images/zombie-py.png']},
-    include_package_data=True,
+    package_data={'zombie-py': ['py.typed']},
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     classifiers=[
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: 3.13',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Software Development :: ' 'Libraries :: Python Modules',
     ],
-    python_requires='>=3.11',
+    python_requires='>=3.10',
 )
